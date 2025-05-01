@@ -1,3 +1,4 @@
+import os
 import schedule
 import time
 import argparse
@@ -5,12 +6,29 @@ from datetime import datetime
 import pytz
 from modules.check_in import daily_check_in
 from modules.user_points import get_user_points
-from modules.game_login import check_play_games_task, reset_task_check, schedule_task_check
-from config import CONFIG
+from modules.game_login import (
+    check_play_games_task,
+    reset_task_check,
+    schedule_task_check,
+)
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
+CONFIG = {
+    "cookie": os.getenv("Level_Infinite_Cookie"),  # Replace with your actual cookie
+    "user_agent": os.getenv(
+        "Level_Infinite_User_Agent"
+    ),  # Replace with your user agent
+}
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Daily check-in script")
-    parser.add_argument('-m', '--manual', action='store_true', help="Perform a manual check-in")
+    parser.add_argument(
+        "-m", "--manual", action="store_true", help="Perform a manual check-in"
+    )
     args = parser.parse_args()
 
     if args.manual:
@@ -20,7 +38,7 @@ def main() -> None:
 
     print("Script started...")
 
-    tz = pytz.timezone('Asia/Shanghai')
+    tz = pytz.timezone("Asia/Shanghai")
     now = datetime.now(tz)
     schedule_time = now.replace(hour=9, minute=0, second=0, microsecond=0)
     reset_time = now.replace(hour=9, minute=1, second=0, microsecond=0)
@@ -34,6 +52,7 @@ def main() -> None:
     while True:
         schedule.run_pending()
         time.sleep(60)
+
 
 if __name__ == "__main__":
     main()
